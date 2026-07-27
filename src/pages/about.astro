@@ -1,0 +1,191 @@
+---
+import Base from '../layouts/Base.astro';
+
+const skills = ['TypeScript', 'Astro', 'React', 'HTML / CSS', 'Figma', 'Cloudflare'];
+
+const career = [
+	{ year: '2024 —', org: 'フリーランス', role: 'Web 設計・実装(ダミー)' },
+	{ year: '2021 — 2024', org: '株式会社ダミー', role: 'フロントエンドエンジニア' },
+	{ year: '2019 — 2021', org: 'ダミー制作会社', role: 'Web 制作' },
+];
+---
+
+<Base title="About" current="about">
+	<div class="intro-split">
+		<div class="intro">
+			<span class="label accent">ABOUT</span>
+			<h2>冬村 未知</h2>
+			<p class="bio">
+				Web サイトの設計と実装をしています。ここに 2〜3 段落の自己紹介が入ります。何を大事にしているか、どんな仕事を受けているかを書きます。<span
+					class="dummy">(※ダミー)</span
+				>
+			</p>
+		</div>
+		<div class="portrait-wrap">
+			<span class="label">PORTRAIT</span>
+			<div class="portrait-placeholder">
+				<span class="mono">portrait 3:4</span>
+			</div>
+		</div>
+	</div>
+
+	<section class="skills">
+		<span class="label">SKILLS</span>
+		<div class="skill-tags">
+			{skills.map((s) => <span class="skill-tag">{s}</span>)}
+		</div>
+	</section>
+
+	<section class="career">
+		<span class="label">CAREER</span>
+		<div class="career-list">
+			{
+				career.map((c) => (
+					<div class="career-row">
+						<span class="mono year">{c.year}</span>
+						<div class="career-info">
+							<span class="org">{c.org}</span>
+							<span class="role">{c.role}</span>
+						</div>
+					</div>
+				))
+			}
+		</div>
+	</section>
+</Base>
+
+<style>
+	.intro-split {
+		display: grid;
+		grid-template-columns: 1fr 260px;
+		border-bottom: 1px solid var(--rule);
+	}
+
+	.intro {
+		padding: 56px 56px;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+		border-right: 1px solid var(--rule);
+	}
+
+	.intro h2 {
+		font-size: 30px;
+	}
+
+	.bio {
+		max-width: 440px;
+		font-size: 14px;
+		line-height: 2.1;
+		color: var(--fg-sub);
+	}
+
+	.dummy {
+		color: #a9a7a1;
+	}
+
+	.portrait-wrap {
+		padding: 56px 32px;
+		background: var(--bg-sub);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.portrait-placeholder {
+		width: 100%;
+		aspect-ratio: 3 / 4;
+		background-image: repeating-linear-gradient(45deg, #efedea 0 6px, #f7f5f2 6px 12px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.portrait-placeholder span {
+		font-size: 11px;
+		color: var(--muted);
+	}
+
+	.skills {
+		padding: 44px 56px;
+		border-bottom: 1px solid var(--rule);
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.skill-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.skill-tag {
+		font-size: 12.5px;
+		padding: 7px 14px;
+		border: 1px solid #e4e2dc;
+		color: var(--fg-sub);
+	}
+
+	.career {
+		padding: 44px 56px 56px;
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.career-list {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.career-row {
+		display: grid;
+		grid-template-columns: 110px 1fr;
+		gap: 24px;
+		padding: 18px 0;
+		border-top: 1px solid var(--rule);
+	}
+
+	.year {
+		font-size: 11.5px;
+		color: var(--muted);
+	}
+
+	.career-info {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.org {
+		font-size: 14px;
+		font-weight: 500;
+	}
+
+	.role {
+		font-size: 12.5px;
+		color: var(--muted);
+	}
+
+	@media (max-width: 768px) {
+		.intro-split {
+			grid-template-columns: 1fr;
+		}
+
+		.intro {
+			padding: 40px 24px;
+			border-right: none;
+			border-bottom: 1px solid var(--rule);
+		}
+
+		.portrait-wrap {
+			padding: 32px 24px;
+		}
+
+		.skills,
+		.career {
+			padding: 32px 24px;
+		}
+	}
+</style>

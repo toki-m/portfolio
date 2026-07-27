@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+	);
+
+	return posts.map((post, i) => ({
+		params: { slug: post.id },
+		props: {
+			post,
+			prev: posts[i + 1] ?? null,
+			next: posts[i - 1] ?? null,
+		},
+	}));
+}
+
+const { post, prev, next } = Astro.props;
+const { Content } = await render(post);
+
+function formatDate(d: Date) {
+	const y = d.getFullYear();
+	const m = String(d.getMonth() + 1).padStart(2, '0');
+	const day = String(d.getDate()).padStart(2, '0');
+	return `${y}.${m}.${day}`;
+}
+---
+
+<Base title={post.data.title} current="blog">
+	<article class="post">
+		<div class="post-meta mono">
+			<span>{formatDate(post.data.date)}</span>
+			<span class="sep" aria-hidden="true"></span>
+			<span class="tag">{post.data.tag}</span>
+		</div>
+		<h2>{post.data.title}</h2>
+		<div class="prose">
+			<Content />
+		</div>
+		<nav class="post-nav">
+			<a href="/blog">← 記事一覧</a>
+			{next ? <a href={`/blog/${next.id}`} class="accent">次の記事 →</a> : <span />}
+		</nav>
+	</article>
+</Base>
+
+<style>
+	.post {
+		padding: 56px 48px 60px;
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+	}
+
+	.post-meta {
+		display: flex;
+		gap: 14px;
+		align-items: center;
+		font-size: 11px;
+		color: var(--muted);
+	}
+
+	.sep {
+		width: 16px;
+		height: 1px;
+		background: #dcdad4;
+	}
+
+	.tag {
+		color: var(--accent);
+		letter-spacing: 0.12em;
+	}
+
+	.post h2 {
+		font-size: 30px;
+		max-width: 520px;
+	}
+
+	.prose {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+		max-width: var(--maxw-prose);
+	}
+
+	.prose :global(p) {
+		margin: 0;
+		font-size: 14.5px;
+		line-height: 2.15;
+		color: #2c2b25;
+	}
+
+	.prose :global(blockquote) {
+		margin: 0;
+		border-left: 2px solid var(--accent);
+		padding: 4px 0 4px 18px;
+		font-size: 14px;
+		line-height: 2;
+		color: var(--fg-sub);
+	}
+
+	.prose :global(code) {
+		font-family: 'JetBrains Mono', monospace;
+		font-size: 13px;
+		background: #f4f3ef;
+		padding: 1px 5px;
+	}
+
+	.post-nav {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 12px;
+		border-top: 1px solid var(--rule);
+		font-size: 12.5px;
+		color: var(--muted);
+	}
+
+	@media (max-width: 768px) {
+		.post {
+			padding: 40px 24px 48px;
+		}
+	}
+</style>

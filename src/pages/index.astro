@@ -1,17 +1,204 @@
 ---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getCollection } from 'astro:content';
 
+const allPosts = (await getCollection('blog'))
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.map((p) => ({ slug: p.id, title: p.data.title, date: p.data.date, tag: p.data.tag }));
+
+const recentPosts = allPosts.slice(0, 3);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Top" current="top">
+	<div class="hero-wrap">
+		<div class="hero-media" role="img" aria-label="準備中：横長の写真、被写体は右寄り推奨">
+			<span class="mono hero-media-label">hero photo — 準備中</span>
+		</div>
+		<a href="/about" class="about-teaser">
+			<span class="about-teaser-left">
+				<span class="label">ABOUT</span>
+				<span class="about-teaser-text">経歴・スキル・自己紹介について</span>
+			</span>
+			<span class="accent">詳しく見る →</span>
+		</a>
+	</div>
+
+	<div class="split">
+		<section class="recent-posts">
+			<div class="recent-posts-head">
+				<span class="label">RECENT POSTS</span>
+				<a href="/blog" class="accent see-all">すべて見る →</a>
+			</div>
+			<PostList posts={recentPosts} variant="compact" />
+		</section>
+
+		<section id="contact" class="contact">
+			<span class="label">CONTACT</span>
+			<p class="contact-text">ご相談・ご依頼はメールにて承ります。2〜3営業日以内に返信します。</p>
+			<p class="status">
+				<span class="dot" aria-hidden="true"></span>
+				現在、新規のご相談を受付中です
+			</p>
+			<a
+				href="#"
+				class="mono mail-link"
+				data-user="fuyumura.michi"
+				data-domain="gmail.com"
+				>fuyumura.michi<br />[at]gmail.com</a
+			>
+		</section>
+	</div>
+</Base>
+
+<script>
+	document.querySelectorAll<HTMLAnchorElement>('.mail-link').forEach((el) => {
+		el.addEventListener(
+			'click',
+			(e) => {
+				e.preventDefault();
+				const user = el.dataset.user;
+				const domain = el.dataset.domain;
+				window.location.href = `mailto:${user}@${domain}`;
+			},
+			{ once: true },
+		);
+	});
+</script>
+
+<style>
+	.hero-wrap {
+		border-bottom: 1px solid var(--rule);
+	}
+
+	.hero-media {
+		position: relative;
+		height: 420px;
+		background-image: repeating-linear-gradient(45deg, #efedea 0 6px, #f7f5f2 6px 12px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.hero-media-label {
+		font-size: 11px;
+		color: var(--muted);
+	}
+
+	.about-teaser {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 24px;
+		padding: 26px 56px;
+		background: var(--bg-sub);
+		border-top: 1px solid var(--rule);
+		color: var(--fg);
+	}
+
+	.about-teaser:hover {
+		background: #f4f2ee;
+		color: var(--fg);
+	}
+
+	.about-teaser-left {
+		display: flex;
+		align-items: baseline;
+		gap: 18px;
+	}
+
+	.about-teaser-text {
+		font-size: 14.5px;
+	}
+
+	.split {
+		display: grid;
+		grid-template-columns: 1fr 300px;
+		border-bottom: 1px solid var(--rule);
+	}
+
+	.recent-posts {
+		padding: 48px 56px;
+		border-right: 1px solid var(--rule);
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.recent-posts-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+	}
+
+	.see-all {
+		font-size: 12.5px;
+	}
+
+	.contact {
+		padding: 48px 40px;
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+		background: var(--bg-sub);
+	}
+
+	.contact-text {
+		font-size: 14px;
+		line-height: 1.9;
+		color: var(--fg-sub);
+	}
+
+	.status {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 12.5px;
+		color: var(--fg-sub);
+	}
+
+	.status .dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--accent);
+		flex-shrink: 0;
+	}
+
+	.mail-link {
+		font-size: 12.5px;
+		line-height: 1.7;
+		word-break: break-all;
+		border-bottom: 2px solid var(--accent);
+		padding-bottom: 8px;
+		width: fit-content;
+	}
+
+	@media (max-width: 768px) {
+		.hero-media {
+			height: 0;
+			padding-top: 56.25%;
+		}
+
+		.about-teaser {
+			padding: 22px 24px;
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
+		.split {
+			grid-template-columns: 1fr;
+		}
+
+		.recent-posts {
+			border-right: none;
+			border-bottom: 1px solid var(--rule);
+			padding: 40px 24px;
+		}
+
+		.contact {
+			padding: 40px 24px;
+		}
+	}
+</style>

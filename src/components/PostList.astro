@@ -1,0 +1,99 @@
+---
+interface Post {
+	slug: string;
+	title: string;
+	date: Date;
+	tag: string;
+}
+
+interface Props {
+	posts: Post[];
+	variant?: 'compact' | 'full';
+}
+
+const { posts, variant = 'compact' } = Astro.props;
+
+function formatDate(d: Date) {
+	const y = d.getFullYear();
+	const m = String(d.getMonth() + 1).padStart(2, '0');
+	const day = String(d.getDate()).padStart(2, '0');
+	return `${y}.${m}.${day}`;
+}
+---
+
+{
+	posts.length === 0 ? (
+		<p class="empty">準備中です。近日公開予定。</p>
+	) : (
+		<div class="post-list" data-variant={variant}>
+			{posts.map((p) => (
+				<a href={`/blog/${p.slug}`} class="post-row">
+					<span class="mono date">{formatDate(p.date)}</span>
+					<span class="title">{p.title}</span>
+					{variant === 'full' && <span class="mono tag">{p.tag}</span>}
+				</a>
+			))}
+		</div>
+	)
+}
+
+<style>
+	.empty {
+		font-size: 13.5px;
+		color: var(--muted);
+		padding: 14px 12px;
+	}
+
+	.post-list {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.post-row {
+		display: flex;
+		gap: 24px;
+		align-items: baseline;
+		padding: 14px 12px;
+		margin: 0 -12px;
+	}
+
+	.post-row:hover {
+		background: var(--bg-sub);
+		color: var(--fg);
+	}
+
+	.post-list[data-variant='full'] .post-row {
+		display: grid;
+		grid-template-columns: 92px 1fr 90px;
+		gap: 20px;
+		padding: 18px 12px;
+		border-top: 1px solid var(--rule);
+	}
+
+	.date {
+		font-size: 11.5px;
+		color: var(--muted);
+		min-width: 80px;
+	}
+
+	.post-list[data-variant='full'] .date {
+		min-width: 0;
+	}
+
+	.title {
+		font-size: 14.5px;
+		line-height: 1.7;
+	}
+
+	.post-list[data-variant='full'] .title {
+		font-size: 15px;
+	}
+
+	.tag {
+		font-size: 10.5px;
+		letter-spacing: 0.12em;
+		color: #a9a7a1;
+		text-align: right;
+	}
+</style>
